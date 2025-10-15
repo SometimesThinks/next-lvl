@@ -2,10 +2,10 @@ import Link from 'next/link';
 
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Post } from '@/lib/posts';
+import { PostMetadata } from '@/lib/posts';
 import { formatDate } from '@/lib/utils';
 
-const PostListItem = ({ post }: { post: Post }) => {
+const PostListItem = ({ post }: { post: PostMetadata }) => {
   return (
     <Link href={`/posts/${post.slug}`}>
       <Card className="min-w-lg hover: max-w-3xl border-b bg-background text-foreground dark:bg-background dark:text-foreground">

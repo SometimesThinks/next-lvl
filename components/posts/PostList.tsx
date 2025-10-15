@@ -1,9 +1,9 @@
-import { Post } from '@/lib/posts';
+import { PostMetadata } from '@/lib/posts';
 
 import PostListItem from './PostListItem';
 
 interface PostListProps {
-  posts?: Post[];
+  posts?: PostMetadata[];
 }
 
 const PostList = async ({ posts }: PostListProps) => {

@@ -44,7 +44,7 @@ export interface Post {
 }
 
 // 리스트용 경량 포스트 데이터 타입
-export interface PostListItem {
+export interface PostMetadata {
   slug: string;
   title: string;
   tags: string[];
@@ -149,7 +149,7 @@ export const getAllPosts = async (): Promise<Post[]> => {
 };
 
 // 리스트용 경량 포스트 데이터 가져오기
-export const getAllPostListItems = async (): Promise<PostListItem[]> => {
+export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
   const slugs = getPostSlugs();
   const posts = await Promise.all(
     slugs.map(async (slug) => {
@@ -187,6 +187,6 @@ export const getAllPostListItems = async (): Promise<PostListItem[]> => {
 
   // null 값 제거하고 날짜순으로 정렬
   return posts
-    .filter((post): post is PostListItem => post !== null)
+    .filter((post): post is PostMetadata => post !== null)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
