@@ -1,5 +1,7 @@
+import { notFound } from 'next/navigation';
+
 import PostDetail from '@/components/posts/PostDetail';
-import { getPostBySlug, getAllPosts } from '@/lib/posts';
+import { getPostBySlug, getPostSlugs } from '@/lib/posts';
 
 interface PostDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -7,10 +9,10 @@ interface PostDetailPageProps {
 
 // 정적 생성할 포스트 목록 생성
 export async function generateStaticParams() {
-  const posts = await getAllPosts();
+  const slugs = getPostSlugs();
 
-  return posts.map((post) => ({
-    slug: post.slug,
+  return slugs.map((slug) => ({
+    slug,
   }));
 }
 
@@ -34,11 +36,16 @@ export async function generateMetadata({ params }: PostDetailPageProps) {
 
 const PostDetailPage = async ({ params }: PostDetailPageProps) => {
   const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    return notFound();
+  }
 
   return (
     <div className="my-16 mb-[50vh]">
       <main>
-        <PostDetail slug={slug} />
+        <PostDetail post={post} />
       </main>
     </div>
   );

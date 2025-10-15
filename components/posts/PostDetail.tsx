@@ -1,21 +1,14 @@
-import { notFound } from 'next/navigation';
-
 import TableOfContents from '@/components/posts/TableOfContents';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { getPostBySlug } from '@/lib/posts';
+import { Post } from '@/lib/posts';
 import { formatDate } from '@/lib/utils';
 
 interface PostDetailProps {
-  slug: string;
+  post: Post;
 }
 
-const PostDetail = async ({ slug }: PostDetailProps) => {
-  const post = await getPostBySlug(slug);
-  if (!post) {
-    notFound();
-  }
-
+const PostDetail = async ({ post }: PostDetailProps) => {
   return (
     <div className="grid min-h-screen grid-cols-6">
       <div className="col-span-4 col-start-2 max-w-4xl justify-self-center">
@@ -26,7 +19,6 @@ const PostDetail = async ({ slug }: PostDetailProps) => {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </CardContent>
-
           <CardFooter className="flex-wrap items-center gap-2 text-sm">
             {post.tags.length > 0 && (
               <>

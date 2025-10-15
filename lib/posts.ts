@@ -56,7 +56,7 @@ export interface PostListItem {
 const postsDirectory = path.join(process.cwd(), 'contents', 'posts');
 
 // 모든 포스트 파일명 가져오기
-const getPostSlugs = (): string[] => {
+export const getPostSlugs = (): string[] => {
   try {
     const fileNames = fs.readdirSync(postsDirectory);
     return fileNames
@@ -189,36 +189,4 @@ export const getAllPostListItems = async (): Promise<PostListItem[]> => {
   return posts
     .filter((post): post is PostListItem => post !== null)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-};
-
-// 태그별 포스트 필터링
-export const getPostsByTag = async (tag: string): Promise<Post[]> => {
-  const allPosts = await getAllPosts();
-  return allPosts.filter((post) => post.tags.includes(tag));
-};
-
-// 모든 태그 목록 가져오기
-export const getAllTags = async (): Promise<string[]> => {
-  const allPosts = await getAllPosts();
-  const tagSet = new Set<string>();
-
-  allPosts.forEach((post) => {
-    post.tags.forEach((tag) => tagSet.add(tag));
-  });
-
-  return Array.from(tagSet).sort();
-};
-
-// 포스트 검색
-export const searchPosts = async (query: string): Promise<Post[]> => {
-  const allPosts = await getAllPosts();
-  const lowercaseQuery = query.toLowerCase();
-
-  return allPosts.filter((post) => {
-    return (
-      post.title.toLowerCase().includes(lowercaseQuery) ||
-      post.content.toLowerCase().includes(lowercaseQuery) ||
-      post.tags.some((tag) => tag.toLowerCase().includes(lowercaseQuery))
-    );
-  });
 };

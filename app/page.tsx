@@ -1,7 +1,7 @@
 import Profile from '@/components/blog/Profile';
 import TagList from '@/components/blog/TagList';
 import PostList from '@/components/posts/PostList';
-import { getAllPosts } from '@/lib/posts';
+import { getAllPostListItems } from '@/lib/posts';
 
 interface HomeProps {
   searchParams: Promise<{ tag?: string }>;
@@ -9,7 +9,7 @@ interface HomeProps {
 
 const Home = async ({ searchParams }: HomeProps) => {
   const { tag } = await searchParams;
-  const allPosts = await getAllPosts();
+  const allPosts = await getAllPostListItems();
 
   // 태그 필터링
   const filteredPosts = tag
