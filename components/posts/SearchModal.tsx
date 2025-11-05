@@ -4,17 +4,17 @@ import { Search, X, Clock, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 
-import { Post } from '@/lib/posts';
+import { PostMetadata } from '@/lib/posts';
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
-  posts: Post[];
+  posts: PostMetadata[];
 }
 
 const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
   const [query, setQuery] = useState('');
-  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<PostMetadata[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultRefs = useRef<(HTMLAnchorElement | null)[]>([]);

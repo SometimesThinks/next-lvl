@@ -2,6 +2,7 @@ import { ThemeProvider } from 'next-themes';
 
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
+import { getAllPostListItems } from '@/lib/posts';
 
 import type { Metadata } from 'next';
 
@@ -13,17 +14,19 @@ export const metadata: Metadata = {
     '호기심 많은 프론트엔드 개발자의 블로그. TypeScript, React.js, Next.js 등 개발 관련 이야기를 나눠요.',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const searchPosts = await getAllPostListItems();
+
   return (
     <html lang="ko" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class">
           <div className="flex min-h-screen flex-col">
-            <Header />
+            <Header searchPosts={searchPosts} />
             {children}
             <Footer />
           </div>

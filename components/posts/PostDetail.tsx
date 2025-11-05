@@ -8,7 +8,7 @@ interface PostDetailProps {
   post: Post;
 }
 
-const PostDetail = async ({ post }: PostDetailProps) => {
+const PostDetail = ({ post }: PostDetailProps) => {
   return (
     <div className="grid min-h-screen grid-cols-6">
       <div className="col-span-4 col-start-2 max-w-4xl justify-self-center">

@@ -2,29 +2,19 @@
 
 import { Search } from 'lucide-react';
 import Link from 'next/link';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 import SearchModal from '@/components/posts/SearchModal';
 import { Button } from '@/components/ui/button';
 import ThemeToggle from '@/components/ui/theme-toggle';
-import { Post } from '@/lib/posts';
+import { PostMetadata } from '@/lib/posts';
 
-const Header = () => {
+interface HeaderProps {
+  searchPosts: PostMetadata[];
+}
+
+const Header = ({ searchPosts }: HeaderProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-  const [posts, setPosts] = useState<Post[]>([]);
-
-  const openSearch = useCallback(async () => {
-    if (posts.length === 0) {
-      try {
-        const response = await fetch('/api/posts');
-        const allPosts = await response.json();
-        setPosts(allPosts);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    }
-    setIsSearchOpen(true);
-  }, [posts.length]);
 
   // 전역 키보드 이벤트 처리
   useEffect(() => {
@@ -32,16 +22,14 @@ const Header = () => {
       // Ctrl+K 또는 Cmd+K (Mac)
       if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
         event.preventDefault();
-        openSearch();
+        setIsSearchOpen(true);
       }
     };
-
     document.addEventListener('keydown', handleKeyDown);
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [openSearch]);
+  }, []);
 
   return (
     <>
@@ -56,7 +44,12 @@ const Header = () => {
           </div>
           {/* 오른쪽 액션 버튼 박스 */}
           <div className="mr-4 space-x-2">
-            <Button variant="ghost" size="icon" className="h-10 w-10" onClick={openSearch}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10"
+              onClick={() => setIsSearchOpen(true)}
+            >
               <Search className="h-6 w-6" />
             </Button>
             {/* 테마 토글 */}
@@ -64,8 +57,12 @@ const Header = () => {
           </div>
         </div>
       </header>
-
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} posts={posts} />
+      {/* 검색 버튼 */}
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+        posts={searchPosts}
+      />
     </>
   );
 };
