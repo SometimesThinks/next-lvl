@@ -1,4 +1,4 @@
-import { getAllPosts } from './posts';
+import { getAllPostListItems } from './posts';
 
 export interface TagWithCount {
   name: string;
@@ -24,7 +24,7 @@ export const AVAILABLE_TAGS = Object.values(TAG_CATEGORIES).flat();
 
 // 태그별 포스트 수 계산 (동적)
 export const getTagsWithCount = async (): Promise<TagWithCount[]> => {
-  const posts = await getAllPosts();
+  const posts = await getAllPostListItems();
 
   // 모든 포스트의 태그를 수집
   const allTags = posts.flatMap((post) => post.tags);

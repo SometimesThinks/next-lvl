@@ -30,6 +30,100 @@ next build 실행 →
 → 사용자 접속 시마다 서버에서 생성 🐌
 ```
 
+## generateStaticParams는 어디서 사용되나?
+
+### 핵심: 직접 호출하지 않습니다
+
+`generateStaticParams`는 **Next.js 빌드 시스템이 자동으로 호출**하는 특수 함수입니다. 개발자가 직접 호출하는 함수가 아닙니다.
+
+### 사용 방식
+
+#### 1. 정의 위치
+
+```tsx
+// app/posts/[slug]/page.tsx
+export function generateStaticParams() {
+  const slugs = getPostSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+```
+
+#### 2. 호출하는 주체
+
+- **Next.js 빌드 시스템**이 자동으로 호출
+- 개발자가 직접 호출하지 않음
+- `export`만 하면 Next.js가 자동으로 인식하고 호출
+
+### 전체 동작 흐름
+
+```
+1. 개발자가 코드 작성
+   ↓
+   export function generateStaticParams() { ... }
+
+2. npm run build 실행
+   ↓
+   Next.js가 빌드 타임에 자동 감지
+
+3. Next.js가 generateStaticParams() 호출
+   ↓
+   → ["dummy1", "dummy2", "dummy3"] 반환
+
+4. Next.js가 각 slug로 페이지 생성
+   ↓
+   /posts/dummy1 → HTML 파일 생성
+   /posts/dummy2 → HTML 파일 생성
+   /posts/dummy3 → HTML 파일 생성
+
+5. 사용자가 접속
+   ↓
+   이미 생성된 HTML 파일 제공 ⚡ (초고속!)
+```
+
+### 다른 함수들과의 차이
+
+| 함수 | 호출 주체 | 호출 시점 |
+|------|----------|----------|
+| `generateStaticParams()` | Next.js | 빌드 타임 (자동) |
+| `generateMetadata()` | Next.js | 런타임 (자동) |
+| `getPostBySlug()` | 개발자 | 직접 호출 |
+| `getAllPostListItems()` | 개발자 | 직접 호출 |
+
+### 실제 확인 방법
+
+빌드 시 확인:
+
+```bash
+npm run build
+```
+
+출력 예시:
+
+```
+Route (app)                     Size     First Load JS
+├ ○ /                          XXX kB      XXX kB
+├ ○ /posts/dummy1              XXX kB      XXX kB  ← 생성됨!
+├ ○ /posts/dummy2              XXX kB      XXX kB  ← 생성됨!
+└ ○ /posts/dummy3              XXX kB      XXX kB  ← 생성됨!
+```
+
+`○` 표시는 정적으로 생성된 페이지를 의미합니다.
+
+### 왜 필요한가?
+
+#### `generateStaticParams`가 있을 때
+
+- ✅ 빌드 시 미리 HTML 생성
+- ✅ 사용자 접속 시 즉시 제공 (초고속)
+- ✅ SEO에 유리
+- ✅ 서버 부하 감소
+
+#### 없을 때
+
+- ❌ 빌드 시 생성 안 됨
+- ❌ 요청 시마다 서버에서 생성 (느림)
+- ❌ 서버 부하 증가
+
 ## 문제 코드
 
 ### ❌ 비효율적인 구현
@@ -206,9 +300,10 @@ export default PostDetailPage;
 ## 핵심 요약
 
 1. **`generateStaticParams`는 필수** - SSG를 위해 반드시 유지
-2. **내부 구현은 최적화** - 무거운 함수 대신 가벼운 함수 사용
-3. **동기 함수는 `async`/`await` 불필요**
-4. **반환 형식 주의** - 객체 배열 `{ slug: string }[]` 형태로 반환
+2. **Next.js가 자동 호출** - 개발자가 직접 호출하지 않음, `export`만 하면 자동 인식
+3. **내부 구현은 최적화** - 무거운 함수 대신 가벼운 함수 사용
+4. **동기 함수는 `async`/`await` 불필요** - `getPostSlugs()`는 동기 함수
+5. **반환 형식 주의** - 객체 배열 `{ slug: string }[]` 형태로 반환
 
 ## 참고 자료
 

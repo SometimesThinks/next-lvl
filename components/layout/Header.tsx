@@ -15,8 +15,8 @@ interface HeaderProps {
 
 const Header = ({ searchPosts }: HeaderProps) => {
   const [isSearchOpen, setIsSearchOpen] = useState<boolean>(false);
-
-  // 전역 키보드 이벤트 처리
+  // 전역 키보드 이벤트 처리pp
+  // todo: 검색 모달 바깥 클릭 시 닫히도록 수정
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Ctrl+K 또는 Cmd+K (Mac)

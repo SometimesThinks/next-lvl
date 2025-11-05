@@ -132,22 +132,6 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
   }
 };
 
-// 모든 포스트 데이터 가져오기
-export const getAllPosts = async (): Promise<Post[]> => {
-  const slugs = getPostSlugs();
-  const posts = await Promise.all(
-    slugs.map(async (slug) => {
-      const post = await getPostBySlug(slug);
-      return post;
-    }),
-  );
-
-  // null 값 제거하고 날짜순으로 정렬
-  return posts
-    .filter((post): post is Post => post !== null)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-};
-
 // 리스트용 경량 포스트 데이터 가져오기
 export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
   const slugs = getPostSlugs();

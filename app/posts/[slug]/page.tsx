@@ -7,13 +7,9 @@ interface PostDetailPageProps {
   params: Promise<{ slug: string }>;
 }
 
-// 정적 생성할 포스트 목록 생성
-export async function generateStaticParams() {
+export function generateStaticParams() {
   const slugs = getPostSlugs();
-
-  return slugs.map((slug) => ({
-    slug,
-  }));
+  return slugs.map((slug) => ({ slug }));
 }
 
 // 메타데이터 생성
