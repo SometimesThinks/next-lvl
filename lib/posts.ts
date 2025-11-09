@@ -55,6 +55,22 @@ export interface PostMetadata {
 // posts 디렉토리 경로
 const postsDirectory = path.join(process.cwd(), 'contents', 'posts');
 
+const toValidDate = (value: unknown): Date | null => {
+  if (!value) {
+    return null;
+  }
+
+  const date = value instanceof Date ? value : new Date(value);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const resolvePostDate = (frontmatterDate: unknown, stats: fs.Stats): string => {
+  const date = toValidDate(frontmatterDate) ?? toValidDate(stats.mtime) ?? new Date();
+
+  return date.toISOString();
+};
+
 // 모든 포스트 파일명 가져오기
 export const getPostSlugs = (): string[] => {
   try {
@@ -113,9 +129,9 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
     // 마크다운을 HTML로 변환
     const { html: htmlContent, toc } = await markdownToHtml(content);
 
-    // 파일 생성일 가져오기 (frontmatter date가 없으면 파일 생성일 사용)
+    // 날짜 계산 (frontmatter → 파일 mtime → 현재 시각)
     const stats = fs.statSync(fullPath);
-    const fileDate = stats.birthtime.toISOString();
+    const resolvedDate = resolvePostDate(data.date, stats);
 
     return {
       slug,
@@ -123,7 +139,7 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
       tags: data.tags || [],
       content: htmlContent,
       excerpt,
-      date: data.date || fileDate, // frontmatter date가 없으면 파일 생성일 사용
+      date: resolvedDate,
       toc,
     };
   } catch (error) {
@@ -137,7 +153,7 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
   const slugs = getPostSlugs();
   const posts = await Promise.all(
     slugs.map(async (slug) => {
-      try {
+        try {
         const fullPath = path.join(postsDirectory, `${slug}.md`);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data, content } = matter(fileContents);
@@ -151,17 +167,17 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
             .trim()
             .substring(0, 150) + '...';
 
-        // 파일 생성일 가져오기 (frontmatter date가 없으면 파일 생성일 사용)
-        const stats = fs.statSync(fullPath);
-        const fileDate = stats.birthtime.toISOString();
+          // 날짜 계산 (frontmatter → 파일 mtime → 현재 시각)
+          const stats = fs.statSync(fullPath);
+          const resolvedDate = resolvePostDate(data.date, stats);
 
-        return {
-          slug,
-          title: data.title || 'Untitled',
-          tags: data.tags || [],
-          excerpt,
-          date: data.date || fileDate, // frontmatter date가 없으면 파일 생성일 사용
-        };
+          return {
+            slug,
+            title: data.title || 'Untitled',
+            tags: data.tags || [],
+            excerpt,
+            date: resolvedDate,
+          };
       } catch (error) {
         console.error(`Error reading post ${slug}:`, error);
         return null;
