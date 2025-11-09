@@ -115,7 +115,9 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
 
     // 파일 생성일 가져오기 (frontmatter date가 없으면 파일 생성일 사용)
     const stats = fs.statSync(fullPath);
-    const fileDate = stats.birthtime.toISOString();
+    const fileDate = stats.ctime.toISOString();
+    const frontmatterDate = data.date;
+    const fallbackDate = Date.parse(frontmatterDate) ? frontmatterDate : fileDate;
 
     return {
       slug,
@@ -123,7 +125,7 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
       tags: data.tags || [],
       content: htmlContent,
       excerpt,
-      date: data.date || fileDate, // frontmatter date가 없으면 파일 생성일 사용
+      date: fallbackDate,
       toc,
     };
   } catch (error) {
@@ -153,14 +155,16 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
 
         // 파일 생성일 가져오기 (frontmatter date가 없으면 파일 생성일 사용)
         const stats = fs.statSync(fullPath);
-        const fileDate = stats.birthtime.toISOString();
+        const fileDate = stats.ctime.toISOString();
+        const frontmatterDate = data.date;
+        const fallbackDate = Date.parse(frontmatterDate) ? frontmatterDate : fileDate;
 
         return {
           slug,
           title: data.title || 'Untitled',
           tags: data.tags || [],
           excerpt,
-          date: data.date || fileDate, // frontmatter date가 없으면 파일 생성일 사용
+          date: fallbackDate,
         };
       } catch (error) {
         console.error(`Error reading post ${slug}:`, error);

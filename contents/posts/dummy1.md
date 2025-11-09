@@ -1,5 +1,6 @@
 ---
 title: '[dummy1] testing1'
+date: '2025-10-07'
 tags: ['Next.js', 'React', 'TypeScript']
 ---
 

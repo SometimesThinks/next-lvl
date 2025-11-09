@@ -1,5 +1,6 @@
 ---
 title: '[dummy3] testing3'
+date: '2025-10-09'
 tags: ['Tailwind CSS', 'CSS', 'Frontend']
 ---
 

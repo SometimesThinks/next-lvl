@@ -1,5 +1,6 @@
 ---
 title: '[dummy2] testing2'
+date: '2025-10-08'
 tags: ['TypeScript', 'JavaScript', 'Development']
 ---
 
