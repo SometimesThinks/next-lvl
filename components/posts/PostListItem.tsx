@@ -15,7 +15,7 @@ const PostListItem = ({ post }: { post: PostMetadata }) => {
         <CardContent>
           <p>{post.excerpt}</p>
         </CardContent>
-        <CardFooter className="ㅅㄷ flex-wrap items-center gap-2 text-sm">
+        <CardFooter className="flex-wrap items-center gap-2 text-sm">
           {post.tags.length > 0 && (
             <>
               {post.tags.map((tag) => (

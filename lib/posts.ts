@@ -94,6 +94,37 @@ const markdownToHtml = async (markdown: string): Promise<{ html: string; toc: To
   return { html: result.toString(), toc };
 };
 
+const getFirstHeading = (markdown: string): string | null => {
+  const match = markdown.match(/^#{1,6}\s+(.+)$/m);
+  const heading = match?.[1];
+  return heading ? heading.trim() : null;
+};
+
+const createExcerpt = (markdown: string, titleFromFrontmatter?: string): string => {
+  const cleaned = markdown
+    .replace(/^#+\s+/gm, '') // 헤더 제거
+    .replace(/```[\s\S]*?```/g, '') // 코드 블록 제거
+    .replace(/\n+/g, ' ') // 줄바꿈을 공백으로
+    .trim();
+
+  const titleCandidates = [titleFromFrontmatter?.trim(), getFirstHeading(markdown)].filter(
+    (candidate): candidate is string => Boolean(candidate),
+  );
+
+  let excerptSource = cleaned;
+
+  for (const candidate of titleCandidates) {
+    const normalizedCandidate = candidate.toLowerCase();
+    if (excerptSource.toLowerCase().startsWith(normalizedCandidate)) {
+      excerptSource = excerptSource.slice(candidate.length).trimStart();
+      break;
+    }
+  }
+
+  const baseText = excerptSource.length > 0 ? excerptSource : cleaned;
+  return baseText.substring(0, 150) + '...';
+};
+
 // 특정 슬러그로 포스트 데이터 가져오기
 export const getPostBySlug = async (slug: string): Promise<Post | null> => {
   try {
@@ -102,13 +133,7 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
     const { data, content } = matter(fileContents);
 
     // excerpt 생성 (첫 150자)
-    const excerpt =
-      content
-        .replace(/^#+\s+/gm, '') // 헤더 제거
-        .replace(/```[\s\S]*?```/g, '') // 코드 블록 제거
-        .replace(/\n+/g, ' ') // 줄바꿈을 공백으로
-        .trim()
-        .substring(0, 150) + '...';
+    const excerpt = createExcerpt(content, data.title);
 
     // 마크다운을 HTML로 변환
     const { html: htmlContent, toc } = await markdownToHtml(content);
@@ -117,7 +142,10 @@ export const getPostBySlug = async (slug: string): Promise<Post | null> => {
     const stats = fs.statSync(fullPath);
     const fileDate = stats.ctime.toISOString();
     const frontmatterDate = data.date;
-    const fallbackDate = Date.parse(frontmatterDate) ? frontmatterDate : fileDate;
+    const fallbackDate =
+      typeof frontmatterDate === 'string' && !Number.isNaN(Date.parse(frontmatterDate))
+        ? frontmatterDate
+        : fileDate;
 
     return {
       slug,
@@ -145,19 +173,16 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
         const { data, content } = matter(fileContents);
 
         // excerpt 생성 (첫 150자)
-        const excerpt =
-          content
-            .replace(/^#+\s+/gm, '') // 헤더 제거
-            .replace(/```[\s\S]*?```/g, '') // 코드 블록 제거
-            .replace(/\n+/g, ' ') // 줄바꿈을 공백으로
-            .trim()
-            .substring(0, 150) + '...';
+        const excerpt = createExcerpt(content, data.title);
 
         // 파일 생성일 가져오기 (frontmatter date가 없으면 파일 생성일 사용)
         const stats = fs.statSync(fullPath);
         const fileDate = stats.ctime.toISOString();
         const frontmatterDate = data.date;
-        const fallbackDate = Date.parse(frontmatterDate) ? frontmatterDate : fileDate;
+        const fallbackDate =
+          typeof frontmatterDate === 'string' && !Number.isNaN(Date.parse(frontmatterDate))
+            ? frontmatterDate
+            : fileDate;
 
         return {
           slug,
