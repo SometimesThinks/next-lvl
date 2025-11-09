@@ -153,7 +153,7 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
   const slugs = getPostSlugs();
   const posts = await Promise.all(
     slugs.map(async (slug) => {
-        try {
+      try {
         const fullPath = path.join(postsDirectory, `${slug}.md`);
         const fileContents = fs.readFileSync(fullPath, 'utf8');
         const { data, content } = matter(fileContents);
@@ -167,17 +167,17 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
             .trim()
             .substring(0, 150) + '...';
 
-          // 날짜 계산 (frontmatter → 파일 mtime → 현재 시각)
-          const stats = fs.statSync(fullPath);
-          const resolvedDate = resolvePostDate(data.date, stats);
+        // 날짜 계산 (frontmatter → 파일 mtime → 현재 시각)
+        const stats = fs.statSync(fullPath);
+        const resolvedDate = resolvePostDate(data.date, stats);
 
-          return {
-            slug,
-            title: data.title || 'Untitled',
-            tags: data.tags || [],
-            excerpt,
-            date: resolvedDate,
-          };
+        return {
+          slug,
+          title: data.title || 'Untitled',
+          tags: data.tags || [],
+          excerpt,
+          date: resolvedDate,
+        };
       } catch (error) {
         console.error(`Error reading post ${slug}:`, error);
         return null;
