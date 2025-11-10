@@ -203,3 +203,42 @@ export const getAllPostListItems = async (): Promise<PostMetadata[]> => {
     .filter((post): post is PostMetadata => post !== null)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 };
+
+export interface PaginatedPosts {
+  posts: PostMetadata[];
+  totalPosts: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+const DEFAULT_PAGE_SIZE = 6;
+
+export const getPaginatedPostList = async (
+  page = 1,
+  pageSize = DEFAULT_PAGE_SIZE,
+  tag?: string,
+): Promise<PaginatedPosts> => {
+  const allPosts = await getAllPostListItems();
+
+  const filteredPosts = tag
+    ? allPosts.filter((post) =>
+        post.tags.some((postTag) => postTag.toLowerCase().replace(/\s+/g, '-') === tag),
+      )
+    : allPosts;
+
+  const totalPosts = filteredPosts.length;
+  const totalPages = Math.max(Math.ceil(totalPosts / pageSize), 1);
+  const safePage = Number.isFinite(page) && page > 0 ? Math.trunc(page) : 1;
+  const currentPage = Math.min(safePage, totalPages);
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+
+  return {
+    posts: filteredPosts.slice(start, end),
+    totalPosts,
+    totalPages,
+    currentPage,
+    pageSize,
+  };
+};
