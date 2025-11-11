@@ -14,6 +14,8 @@ interface PaginationBarProps {
   tag?: string;
 }
 
+const WINDOW_SIZE = 5;
+
 const buildHref = (basePath: string, page: number, tag?: string) => {
   const params = new URLSearchParams();
 
@@ -31,10 +33,18 @@ const PaginationBar = ({ totalPages, currentPage, basePath, tag }: PaginationBar
   if (totalPages <= 1) {
     return null;
   }
+  const groupStart = Math.floor((currentPage - 1) / WINDOW_SIZE) * WINDOW_SIZE + 1;
+  const groupEnd = Math.min(groupStart + WINDOW_SIZE - 1, totalPages);
+  const nextGroupPage = groupEnd + 1;
+  const prevGroupPage = groupStart - WINDOW_SIZE;
 
-  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
-  const hasPrev = currentPage > 1;
-  const hasNext = currentPage < totalPages;
+  const visiblePages = Array.from(
+    { length: groupEnd - groupStart + 1 },
+    (_, index) => groupStart + index,
+  );
+
+  const hasPrevGroup = groupStart > 1;
+  const hasNextGroup = groupEnd < totalPages;
 
   return (
     <Pagination>
@@ -42,14 +52,14 @@ const PaginationBar = ({ totalPages, currentPage, basePath, tag }: PaginationBar
         {/* 이전 페이지 버튼 */}
         <PaginationItem>
           <PaginationPrevious
-            href={hasPrev ? buildHref(basePath, currentPage - 1, tag) : '#'}
-            aria-disabled={!hasPrev}
-            tabIndex={hasPrev ? 0 : -1}
-            className={!hasPrev ? 'pointer-events-none opacity-50' : undefined}
+            href={groupStart > 1 ? buildHref(basePath, prevGroupPage, tag) : '#'}
+            aria-disabled={!hasPrevGroup}
+            tabIndex={hasPrevGroup ? 0 : -1}
+            className={!hasPrevGroup ? 'pointer-events-none opacity-50' : undefined}
           />
         </PaginationItem>
         {/* 페이지 버튼 */}
-        {pages.map((page) => (
+        {visiblePages.map((page) => (
           <PaginationItem key={page}>
             <PaginationLink
               href={buildHref(basePath, page, tag)}
@@ -63,10 +73,10 @@ const PaginationBar = ({ totalPages, currentPage, basePath, tag }: PaginationBar
         {/* 다음 페이지 버튼 */}
         <PaginationItem>
           <PaginationNext
-            href={hasNext ? buildHref(basePath, currentPage + 1, tag) : '#'}
-            aria-disabled={!hasNext}
-            tabIndex={hasNext ? 0 : -1}
-            className={!hasNext ? 'pointer-events-none opacity-50' : undefined}
+            href={groupEnd < totalPages ? buildHref(basePath, nextGroupPage, tag) : '#'}
+            aria-disabled={!hasNextGroup}
+            tabIndex={hasNextGroup ? 0 : -1}
+            className={!hasNextGroup ? 'pointer-events-none opacity-50' : undefined}
           />
         </PaginationItem>
       </PaginationContent>
