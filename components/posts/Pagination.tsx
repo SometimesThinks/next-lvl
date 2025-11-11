@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 import {
   Pagination,
   PaginationContent,
@@ -41,25 +39,29 @@ const PaginationBar = ({ totalPages, currentPage, basePath, tag }: PaginationBar
   return (
     <Pagination>
       <PaginationContent>
+        {/* todo: Link 컴포넌트 사용 */}
         <PaginationItem>
           <PaginationPrevious
-            href={hasPrev ? buildHref(basePath, currentPage - 1, tag) : undefined}
+            href={hasPrev ? buildHref(basePath, currentPage - 1, tag) : '/'}
             aria-disabled={!hasPrev}
             tabIndex={hasPrev ? 0 : -1}
           />
         </PaginationItem>
-
         {pages.map((page) => (
           <PaginationItem key={page}>
-            <PaginationLink asChild isActive={page === currentPage} size="default">
-              <Link href={buildHref(basePath, page, tag)}>{page}</Link>
+            <PaginationLink
+              href={buildHref(basePath, page, tag)}
+              isActive={page === currentPage}
+              size="default"
+            >
+              {page}
             </PaginationLink>
           </PaginationItem>
         ))}
-
+        {/* todo: Link 컴포넌트 사용 */}
         <PaginationItem>
           <PaginationNext
-            href={hasNext ? buildHref(basePath, currentPage + 1, tag) : undefined}
+            href={hasNext ? buildHref(basePath, currentPage + 1, tag) : '/'}
             aria-disabled={!hasNext}
             tabIndex={hasNext ? 0 : -1}
           />
