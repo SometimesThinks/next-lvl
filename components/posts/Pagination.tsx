@@ -39,14 +39,16 @@ const PaginationBar = ({ totalPages, currentPage, basePath, tag }: PaginationBar
   return (
     <Pagination>
       <PaginationContent>
-        {/* todo: Link 컴포넌트 사용 */}
+        {/* 이전 페이지 버튼 */}
         <PaginationItem>
           <PaginationPrevious
-            href={hasPrev ? buildHref(basePath, currentPage - 1, tag) : '/'}
+            href={hasPrev ? buildHref(basePath, currentPage - 1, tag) : '#'}
             aria-disabled={!hasPrev}
             tabIndex={hasPrev ? 0 : -1}
+            className={!hasPrev ? 'pointer-events-none opacity-50' : undefined}
           />
         </PaginationItem>
+        {/* 페이지 버튼 */}
         {pages.map((page) => (
           <PaginationItem key={page}>
             <PaginationLink
@@ -58,12 +60,13 @@ const PaginationBar = ({ totalPages, currentPage, basePath, tag }: PaginationBar
             </PaginationLink>
           </PaginationItem>
         ))}
-        {/* todo: Link 컴포넌트 사용 */}
+        {/* 다음 페이지 버튼 */}
         <PaginationItem>
           <PaginationNext
-            href={hasNext ? buildHref(basePath, currentPage + 1, tag) : '/'}
+            href={hasNext ? buildHref(basePath, currentPage + 1, tag) : '#'}
             aria-disabled={!hasNext}
             tabIndex={hasNext ? 0 : -1}
+            className={!hasNext ? 'pointer-events-none opacity-50' : undefined}
           />
         </PaginationItem>
       </PaginationContent>
