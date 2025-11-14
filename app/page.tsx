@@ -30,7 +30,7 @@ const Home = async ({ searchParams }: HomeProps) => {
 
   return (
     <div className="my-16 mb-[20vh] grid grid-cols-1 justify-center lg:grid-cols-6">
-      <main className="space-y-16 lg:col-span-3 lg:col-start-2">
+      <main className="space-y-8 lg:col-span-3 lg:col-start-2">
         <PostList posts={paginatedPosts} />
         <PaginationBar
           totalPages={totalPages}

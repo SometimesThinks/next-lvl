@@ -6,10 +6,10 @@ import { Card, CardHeader, CardFooter, CardContent, CardTitle, CardDescription }
 
 const Profile = () => {
   return (
-    <Card className="gap-4 border-b bg-background text-foreground dark:bg-background dark:text-foreground">
-      <CardHeader>
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
+    <Card className="gap-4 border-b bg-background text-center text-foreground dark:bg-background dark:text-foreground">
+      <CardHeader className="justify-center gap-2">
+        <Avatar className="size-36">
+          <AvatarImage src="/profile-image.jpg" />
         </Avatar>
         <CardTitle>Daeyeong Yun</CardTitle>
         <CardDescription>Frontend Developer</CardDescription>
@@ -17,7 +17,7 @@ const Profile = () => {
       <CardContent>
         <p className="text-sm">호기심 많은 프론트엔드 개발자입니다.</p>
       </CardContent>
-      <CardFooter className="gap-4">
+      <CardFooter className="justify-center gap-4">
         <Link href="https://github.com/SometimesThinks">
           <Github />
         </Link>
