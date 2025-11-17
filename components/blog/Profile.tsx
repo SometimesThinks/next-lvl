@@ -15,7 +15,7 @@ const Profile = () => {
         <CardDescription>Frontend Developer</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm">호기심 많은 프론트엔드 개발자입니다.</p>
+        <p className="text-sm">호기심 많은 프론트엔드 개발자</p>
       </CardContent>
       <CardFooter className="justify-center gap-4">
         <Link href="https://github.com/SometimesThinks">

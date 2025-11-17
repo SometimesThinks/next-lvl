@@ -1,9 +1,10 @@
 'use client';
 
-import { Search, X, Clock, Tag } from 'lucide-react';
+import { Search, SearchX, Clock, Tag } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { PostMetadata } from '@/lib/posts';
 
 interface SearchModalProps {
@@ -13,12 +14,11 @@ interface SearchModalProps {
 }
 
 const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState<string>('');
   const [filteredPosts, setFilteredPosts] = useState<PostMetadata[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-
   // 검색어에 따른 포스트 필터링
   useEffect(() => {
     if (query.trim()) {
@@ -34,16 +34,15 @@ const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
     }
     setSelectedIndex(-1); // 검색어 변경 시 선택 초기화
   }, [query, posts]);
-
   // 모달이 열릴 때 입력창에 포커스
   useEffect(() => {
     if (isOpen) {
+      console.log(navigator.userAgent);
       inputRef.current?.focus();
     } else {
       setQuery('');
     }
   }, [isOpen]);
-
   // 선택된 항목 스크롤
   useEffect(() => {
     if (selectedIndex >= 0 && resultRefs.current[selectedIndex]) {
@@ -53,7 +52,6 @@ const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
       });
     }
   }, [selectedIndex]);
-
   // 키보드 이벤트 처리
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -74,12 +72,10 @@ const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
         }
       }
     };
-
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'hidden'; // 스크롤 방지
     }
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = 'unset';
@@ -89,11 +85,14 @@ const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
   const handlePostClick = () => {
     onClose();
   };
-
+  // 모달이 닫혀있으면 아무것도 렌더링하지 않음
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-16">
+    <div
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-16"
+      onClick={onClose}
+    >
       <div className="mx-4 w-full max-w-2xl">
         <div className="rounded-lg border bg-background shadow-lg">
           {/* 검색 입력창 */}
@@ -102,17 +101,14 @@ const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
             <input
               ref={inputRef}
               type="text"
-              placeholder="검색어를 입력하세요"
+              placeholder="search..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
             />
-            <button
-              onClick={onClose}
-              className="ml-3 rounded-md p-1 text-muted-foreground hover:bg-muted"
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <Button onClick={onClose} variant="outline" size="sm" className="text-muted-foreground">
+              esc
+            </Button>
           </div>
           {/* 검색 결과 */}
           <div className="max-h-96 overflow-y-auto">
@@ -161,9 +157,8 @@ const SearchModal = ({ isOpen, onClose, posts }: SearchModalProps) => {
               </div>
             ) : (
               <div className="px-4 py-8 text-center text-muted-foreground">
-                <Search className="mx-auto mb-2 h-8 w-8 opacity-50" />
-                <p>검색 결과가 없습니다</p>
-                <p className="mt-1 text-sm">다른 키워드로 시도해보세요</p>
+                <SearchX className="mx-auto mb-6 h-8 w-8 opacity-50" />
+                <p>No results found for &quot;{query}&quot;</p>
               </div>
             )}
           </div>

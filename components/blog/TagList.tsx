@@ -15,7 +15,7 @@ const TagList = async ({ activeTag }: TagListProps) => {
   }
 
   return (
-    <section className="text-center">
+    <section className="pl-4">
       <h3 className="mb-3 text-lg font-semibold">Tags</h3>
       <div className="space-y-4">
         {tagCategories.map((category) => (
