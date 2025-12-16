@@ -7,7 +7,7 @@ import { getAllPostListItems } from '@/lib/posts';
 import type { Metadata } from 'next';
 
 import './globals.css';
-// todo: 아이콘 추가
+// todo: 아이콘 추가, 메타데이터 최적화
 export const metadata: Metadata = {
   title: 'Next Lvl | Developer Blog',
   description:
