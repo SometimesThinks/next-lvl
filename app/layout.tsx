@@ -28,7 +28,7 @@ export default async function RootLayout({
     <html lang="ko" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class">
-          <div className="flex min-h-screen flex-col">
+          <div className="flex flex-col">
             <Header searchPosts={searchPosts} />
             {children}
             <Footer />

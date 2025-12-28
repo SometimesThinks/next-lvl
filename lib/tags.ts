@@ -13,10 +13,11 @@ export interface TagCategory {
 
 // 태그 카테고리별 분류
 export const TAG_CATEGORIES = {
-  Frontend: ['React', 'Next.js', 'TypeScript', 'JavaScript', 'CSS', 'Tailwind CSS'],
-  Backend: ['Node.js', 'Express', 'Database', 'API'],
-  DevOps: ['Docker', 'AWS', 'CI/CD', 'Deployment'],
-  General: ['Web Development', 'Tutorial', 'Tips', 'Career', 'Learning'],
+  Frontend: [],
+  Backend: [],
+  DevOps: ['Git'],
+  General: [],
+  Personal: [],
 } as const;
 
 // 모든 태그를 평면화
